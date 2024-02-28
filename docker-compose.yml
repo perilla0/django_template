@@ -22,24 +22,6 @@ services:
     ports:
       - 8000:8000
 
-  # proxy:
-  #   container_name: proxy
-  #   hostname: proxy
-  #   image: ${PROJECT_NAME}_app
-  #   environment:
-  #     TZ: ${TZ}
-  #   command: gunicorn -w 4 myapp:app
-  #   volumes:
-  #     - type: bind
-  #       source: ./src
-  #       target: /var/www
-  #   depends_on:
-  #     - app
-  #   ports:
-  #     - 8000:8000
-  #   networks:
-  #     backend:
-
   web:
     container_name: web
     hostname: web
