@@ -1,0 +1,98 @@
+
+version: '3.9'
+
+services:
+
+  app:
+    container_name: app
+    hostname: app
+    image: ${PROJECT_NAME}_app
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    command: gunicorn -b 0.0.0.0:8000 --workers 5 config.wsgi
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./src
+        target: /app/src
+    networks:
+      backend:
+    ports:
+      - 8000:8000
+
+  # proxy:
+  #   container_name: proxy
+  #   hostname: proxy
+  #   image: ${PROJECT_NAME}_app
+  #   environment:
+  #     TZ: ${TZ}
+  #   command: gunicorn -w 4 myapp:app
+  #   volumes:
+  #     - type: bind
+  #       source: ./src
+  #       target: /var/www
+  #   depends_on:
+  #     - app
+  #   ports:
+  #     - 8000:8000
+  #   networks:
+  #     backend:
+
+  web:
+    container_name: web
+    hostname: web
+    image: ${PROJECT_NAME}_web
+    build:
+      context: ./docker/web
+      dockerfile: Dockerfile
+    environment:
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./src
+        target: /var/www
+      - type: bind
+        source: ./docker/web/conf.d
+        target: /etc/nginx/conf.d
+    depends_on:
+      - app
+    ports:
+      - 80:80
+    networks:
+      backend:
+
+  db_pgsql:
+    container_name: db_pgsql
+    hostname: db_pgsql
+    image: ${PROJECT_NAME}_db_pgsql
+    build:
+      context: ./docker/db_pgsql
+      dockerfile: Dockerfile
+    environment:
+      # POSTGRES_DB: main # initdb.dにて作成するためコメントアウト
+      POSTGRES_USER: root
+      POSTGRES_PASS: password
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --locale=C
+      TZ: ${TZ}
+    volumes:
+      - type: bind
+        source: ./docker/db_pgsql/initdb.d
+        target: /docker-entrypoint-initdb.d
+      - type: volume
+        source: db-pgsql-data
+        target: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      backend:
+
+volumes:
+  db-pgsql-data:
+
+networks:
+  backend:
+    name: ${PROJECT_NAME}_backend
+    driver: bridge
