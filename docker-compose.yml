@@ -33,7 +33,7 @@ services:
       TZ: ${TZ}
     volumes:
       - type: bind
-        source: ./src
+        source: ./frontend
         target: /var/www
       - type: bind
         source: ./docker/web/conf.d
