@@ -2,6 +2,7 @@
   - [1.1. Djangoプロジェクト作成＆削除](#11-djangoプロジェクト作成削除)
   - [1.2. コンテナ立ち上げ](#12-コンテナ立ち上げ)
   - [1.3. すべてのコンテナを削除](#13-すべてのコンテナを削除)
+- [Qiita記事](#qiita記事)
 
 
 # 1. このプロジェクトについて
@@ -48,3 +49,8 @@ docker compose up
 cd script
 ./down_clear.sh
 ```
+
+# Qiita記事
+
+[Python] Django+Gunicorn+NginxのDockerCompose環境
+https://qiita.com/perilla/items/1fd83b692f2cb0f59575
